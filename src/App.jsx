@@ -173,7 +173,7 @@ export default function App() {
            * Funciona corretamente no GitHub Pages
            * usando /wct-site/ como base.
            */
-          src={`${import.meta.env.BASE_URL}video/academia-intro.mp4`}
+         src={`${import.meta.env.BASE_URL}video/academia-intro.mp4`}
 
           muted
           playsInline
