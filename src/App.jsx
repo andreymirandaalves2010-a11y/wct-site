@@ -50,21 +50,16 @@ export default function App() {
         Math.max(0, -rect.top / (total || 1))
       );
 
-      /*
-       * Controla o vídeo conforme a rolagem.
-       */
-      if (ready && video.duration) {
-        const t =
-          p * Math.max(0, video.duration - 0.05);
+      // Controla o vídeo conforme a rolagem
+      if (ready && Number.isFinite(video.duration) && video.duration > 0) {
+        const t = p * Math.max(0, video.duration - 0.05);
 
         if (Math.abs(video.currentTime - t) > 0.03) {
           video.currentTime = t;
         }
       }
 
-      /*
-       * Textos que aparecem durante a animação.
-       */
+      // Textos da animação
       const n = CUES.length;
 
       cueRefs.current.forEach((el, i) => {
@@ -80,25 +75,17 @@ export default function App() {
             local < 0.25
               ? local / 0.25
               : local > 0.75
-              ? (1 - local) / 0.25
-              : 1;
+                ? (1 - local) / 0.25
+                : 1;
         }
 
-        opacity = Math.min(
-          1,
-          Math.max(0, opacity)
-        );
+        opacity = Math.min(1, Math.max(0, opacity));
 
         el.style.opacity = opacity;
-
-        el.style.transform = `translateY(${
-          (1 - opacity) * 24
-        }px)`;
+        el.style.transform = `translateY(${(1 - opacity) * 24}px)`;
       });
 
-      /*
-       * Animação final do Hero.
-       */
+      // Animação final
       const endOpacity = Math.min(
         1,
         Math.max(0, (p - 0.9) / 0.1)
@@ -106,7 +93,6 @@ export default function App() {
 
       if (endRef.current) {
         endRef.current.style.opacity = endOpacity;
-
         endRef.current.style.transform = `scale(${
           0.96 + endOpacity * 0.04
         })`;
@@ -119,34 +105,19 @@ export default function App() {
       }
     };
 
-    window.addEventListener(
-      "scroll",
-      onScroll,
-      { passive: true }
-    );
+    window.addEventListener("scroll", onScroll, {
+      passive: true,
+    });
 
-    window.addEventListener(
-      "resize",
-      onScroll
-    );
+    window.addEventListener("resize", onScroll);
 
     onScroll();
 
     return () => {
-      window.removeEventListener(
-        "scroll",
-        onScroll
-      );
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
 
-      window.removeEventListener(
-        "resize",
-        onScroll
-      );
-
-      video.removeEventListener(
-        "loadedmetadata",
-        onMeta
-      );
+      video.removeEventListener("loadedmetadata", onMeta);
 
       if (raf) {
         cancelAnimationFrame(raf);
@@ -160,21 +131,11 @@ export default function App() {
           VÍDEO DE FUNDO
       ====================================================== */}
 
-      <div
-        className="video-bg"
-        aria-hidden="true"
-      >
+      <div className="video-bg" aria-hidden="true">
         <video
           ref={videoRef}
           className="video"
-
-          /*
-           * IMPORTANTE:
-           * Funciona corretamente no GitHub Pages
-           * usando /wct-site/ como base.
-           */
-         src={`${import.meta.env.BASE_URL}video/academia-intro.mp4`}
-
+          src={`${import.meta.env.BASE_URL}video/academia-intro.mp4`}
           muted
           playsInline
           preload="auto"
@@ -188,10 +149,7 @@ export default function App() {
       ====================================================== */}
 
       <header className="nav">
-        <a
-          className="brand"
-          href="#top"
-        >
+        <a className="brand" href="#top">
           ACADEMIA
         </a>
 
@@ -210,25 +168,11 @@ export default function App() {
         </label>
 
         <nav className="menu">
-          <a href="#treinos">
-            Treinos
-          </a>
-
-          <a href="#estrutura">
-            Estrutura
-          </a>
-
-          <a href="#sobre">
-            Sobre
-          </a>
-
-          <a href="#planos">
-            Planos
-          </a>
-
-          <a href="#faq">
-            FAQ
-          </a>
+          <a href="#treinos">Treinos</a>
+          <a href="#estrutura">Estrutura</a>
+          <a href="#sobre">Sobre</a>
+          <a href="#planos">Planos</a>
+          <a href="#faq">FAQ</a>
 
           <a
             href={IG}
@@ -301,7 +245,6 @@ export default function App() {
         ====================================================== */}
 
         <section className="main-hero">
-
           <p className="tag">
             CENTRO DE TREINAMENTO
           </p>
@@ -319,7 +262,6 @@ export default function App() {
           </p>
 
           <div className="actions">
-
             <a
               className="btn btn-red"
               href={WA}
@@ -335,7 +277,6 @@ export default function App() {
             >
               CONHECER A ACADEMIA
             </a>
-
           </div>
         </section>
 
@@ -347,7 +288,6 @@ export default function App() {
           id="sobre"
           className="section"
         >
-
           <p className="tag">
             SOBRE A ACADEMIA
           </p>
@@ -375,7 +315,6 @@ export default function App() {
             baseada em disciplina, consistência,
             orientação e evolução.
           </p>
-
         </section>
 
         {/* =====================================================
@@ -383,7 +322,6 @@ export default function App() {
         ====================================================== */}
 
         <section className="section">
-
           <p className="tag">
             POR QUE TREINAR?
           </p>
@@ -395,61 +333,41 @@ export default function App() {
           </h2>
 
           <div className="cards">
-
             <article className="card">
+              <span className="card-number">01</span>
 
-              <span className="card-number">
-                01
-              </span>
-
-              <h3>
-                SAÚDE
-              </h3>
+              <h3>SAÚDE</h3>
 
               <p>
                 A prática regular de exercícios pode
                 contribuir para uma rotina mais ativa,
                 disposição e qualidade de vida.
               </p>
-
             </article>
 
             <article className="card">
+              <span className="card-number">02</span>
 
-              <span className="card-number">
-                02
-              </span>
-
-              <h3>
-                PERFORMANCE
-              </h3>
+              <h3>PERFORMANCE</h3>
 
               <p>
                 Desenvolva diferentes capacidades
                 físicas por meio de treinos
                 estruturados e progressivos.
               </p>
-
             </article>
 
             <article className="card">
+              <span className="card-number">03</span>
 
-              <span className="card-number">
-                03
-              </span>
-
-              <h3>
-                CONSISTÊNCIA
-              </h3>
+              <h3>CONSISTÊNCIA</h3>
 
               <p>
                 Crie uma rotina de treinamento e
                 transforme pequenas evoluções em
                 progresso ao longo do tempo.
               </p>
-
             </article>
-
           </div>
         </section>
 
@@ -461,7 +379,6 @@ export default function App() {
           id="treinos"
           className="section"
         >
-
           <p className="tag">
             MODALIDADES
           </p>
@@ -478,75 +395,41 @@ export default function App() {
           </p>
 
           <div className="cards">
-
             <article className="card">
-
-              <span className="card-number">
-                01
-              </span>
-
-              <h3>
-                MUSCULAÇÃO
-              </h3>
-
+              <span className="card-number">01</span>
+              <h3>MUSCULAÇÃO</h3>
               <p>
                 Treinamento de força para desenvolver
                 resistência, força e performance.
               </p>
-
             </article>
 
             <article className="card">
-
-              <span className="card-number">
-                02
-              </span>
-
-              <h3>
-                CARDIO
-              </h3>
-
+              <span className="card-number">02</span>
+              <h3>CARDIO</h3>
               <p>
                 Exercícios voltados para condicionamento
                 cardiovascular e resistência.
               </p>
-
             </article>
 
             <article className="card">
-
-              <span className="card-number">
-                03
-              </span>
-
-              <h3>
-                FUNCIONAL
-              </h3>
-
+              <span className="card-number">03</span>
+              <h3>FUNCIONAL</h3>
               <p>
                 Movimentos dinâmicos para trabalhar
                 diferentes capacidades físicas.
               </p>
-
             </article>
 
             <article className="card">
-
-              <span className="card-number">
-                04
-              </span>
-
-              <h3>
-                AULAS EM GRUPO
-              </h3>
-
+              <span className="card-number">04</span>
+              <h3>AULAS EM GRUPO</h3>
               <p>
                 Treine em equipe e mantenha a motivação
                 durante cada sessão.
               </p>
-
             </article>
-
           </div>
         </section>
 
@@ -558,7 +441,6 @@ export default function App() {
           id="estrutura"
           className="section"
         >
-
           <p className="tag">
             NOSSA ESTRUTURA
           </p>
@@ -576,46 +458,29 @@ export default function App() {
           </p>
 
           <div className="cards">
-
             <article className="card">
-
-              <h3>
-                EQUIPAMENTOS
-              </h3>
-
+              <h3>EQUIPAMENTOS</h3>
               <p>
                 Equipamentos para diferentes exercícios,
                 objetivos e níveis de treinamento.
               </p>
-
             </article>
 
             <article className="card">
-
-              <h3>
-                ESPAÇO
-              </h3>
-
+              <h3>ESPAÇO</h3>
               <p>
                 Ambientes organizados para você
                 realizar seus exercícios com liberdade.
               </p>
-
             </article>
 
             <article className="card">
-
-              <h3>
-                AMBIENTE
-              </h3>
-
+              <h3>AMBIENTE</h3>
               <p>
                 Um espaço pensado para manter você
                 focado durante cada treino.
               </p>
-
             </article>
-
           </div>
         </section>
 
@@ -624,7 +489,6 @@ export default function App() {
         ====================================================== */}
 
         <section className="section band">
-
           <p className="tag">
             ACOMPANHAMENTO
           </p>
@@ -642,46 +506,29 @@ export default function App() {
           </p>
 
           <div className="cards">
-
             <article className="card">
-
-              <h3>
-                ORIENTAÇÃO
-              </h3>
-
+              <h3>ORIENTAÇÃO</h3>
               <p>
                 Receba orientações para entender
                 melhor os movimentos e exercícios.
               </p>
-
             </article>
 
             <article className="card">
-
-              <h3>
-                EVOLUÇÃO
-              </h3>
-
+              <h3>EVOLUÇÃO</h3>
               <p>
                 Acompanhe seu desenvolvimento e ajuste
                 sua rotina conforme seus objetivos.
               </p>
-
             </article>
 
             <article className="card">
-
-              <h3>
-                MOTIVAÇÃO
-              </h3>
-
+              <h3>MOTIVAÇÃO</h3>
               <p>
                 Um ambiente de treino pode ajudar
                 você a manter uma rotina mais consistente.
               </p>
-
             </article>
-
           </div>
         </section>
 
@@ -690,7 +537,6 @@ export default function App() {
         ====================================================== */}
 
         <section className="section">
-
           <p className="tag">
             SEU OBJETIVO
           </p>
@@ -702,46 +548,29 @@ export default function App() {
           </h2>
 
           <div className="cards">
-
             <article className="card">
-
-              <h3>
-                CONDICIONAMENTO
-              </h3>
-
+              <h3>CONDICIONAMENTO</h3>
               <p>
                 Desenvolva resistência e melhore seu
                 preparo físico para diferentes atividades.
               </p>
-
             </article>
 
             <article className="card">
-
-              <h3>
-                FORÇA
-              </h3>
-
+              <h3>FORÇA</h3>
               <p>
                 Trabalhe diferentes grupos musculares
                 e desenvolva sua capacidade de força.
               </p>
-
             </article>
 
             <article className="card">
-
-              <h3>
-                QUALIDADE DE VIDA
-              </h3>
-
+              <h3>QUALIDADE DE VIDA</h3>
               <p>
                 Transforme o exercício em parte da
                 sua rotina e mantenha-se ativo.
               </p>
-
             </article>
-
           </div>
         </section>
 
@@ -750,7 +579,6 @@ export default function App() {
         ====================================================== */}
 
         <section className="section center">
-
           <p className="tag">
             HORÁRIOS
           </p>
@@ -762,50 +590,26 @@ export default function App() {
           </h2>
 
           <div className="schedule">
-
             <div className="schedule-item">
-
-              <strong>
-                SEGUNDA — SEXTA
-              </strong>
-
-              <span>
-                06:00 — 22:00
-              </span>
-
+              <strong>SEGUNDA — SEXTA</strong>
+              <span>06:00 — 22:00</span>
             </div>
 
             <div className="schedule-item">
-
-              <strong>
-                SÁBADO
-              </strong>
-
-              <span>
-                08:00 — 14:00
-              </span>
-
+              <strong>SÁBADO</strong>
+              <span>08:00 — 14:00</span>
             </div>
 
             <div className="schedule-item">
-
-              <strong>
-                DOMINGO
-              </strong>
-
-              <span>
-                FECHADO
-              </span>
-
+              <strong>DOMINGO</strong>
+              <span>FECHADO</span>
             </div>
-
           </div>
 
           <p className="body small">
             * Horários ilustrativos. Ajuste conforme
             o funcionamento real da academia.
           </p>
-
         </section>
 
         {/* =====================================================
@@ -816,7 +620,6 @@ export default function App() {
           id="planos"
           className="section"
         >
-
           <p className="tag">
             PLANOS
           </p>
@@ -828,16 +631,10 @@ export default function App() {
           </h2>
 
           <div className="cards">
-
             <article className="card plan-card">
+              <span className="card-number">01</span>
 
-              <span className="card-number">
-                01
-              </span>
-
-              <h3>
-                MENSAL
-              </h3>
+              <h3>MENSAL</h3>
 
               <p>
                 Flexibilidade para começar sua rotina
@@ -856,18 +653,12 @@ export default function App() {
               >
                 SABER MAIS
               </a>
-
             </article>
 
             <article className="card plan-card featured">
+              <span className="card-number">02</span>
 
-              <span className="card-number">
-                02
-              </span>
-
-              <h3>
-                TRIMESTRAL
-              </h3>
+              <h3>TRIMESTRAL</h3>
 
               <p>
                 Mais tempo para criar consistência
@@ -886,18 +677,12 @@ export default function App() {
               >
                 QUERO ESTE
               </a>
-
             </article>
 
             <article className="card plan-card">
+              <span className="card-number">03</span>
 
-              <span className="card-number">
-                03
-              </span>
-
-              <h3>
-                ANUAL
-              </h3>
+              <h3>ANUAL</h3>
 
               <p>
                 Para quem quer manter uma rotina de
@@ -916,9 +701,7 @@ export default function App() {
               >
                 SABER MAIS
               </a>
-
             </article>
-
           </div>
         </section>
 
@@ -930,7 +713,6 @@ export default function App() {
           id="faq"
           className="section"
         >
-
           <p className="tag">
             DÚVIDAS FREQUENTES
           </p>
@@ -942,7 +724,6 @@ export default function App() {
           </h2>
 
           <div className="faq">
-
             <details>
               <summary>
                 Preciso ter experiência para começar?
@@ -1010,7 +791,6 @@ export default function App() {
                 uma visita e conhecer o espaço.
               </p>
             </details>
-
           </div>
         </section>
 
@@ -1019,7 +799,6 @@ export default function App() {
         ====================================================== */}
 
         <section className="section center">
-
           <p className="tag">
             INSTAGRAM
           </p>
@@ -1041,7 +820,6 @@ export default function App() {
           >
             VER NO INSTAGRAM
           </a>
-
         </section>
 
         {/* =====================================================
@@ -1049,7 +827,6 @@ export default function App() {
         ====================================================== */}
 
         <section className="section center cta">
-
           <p className="tag">
             COMECE AGORA
           </p>
@@ -1067,7 +844,6 @@ export default function App() {
           </p>
 
           <div className="actions">
-
             <a
               className="btn btn-red"
               href={WA}
@@ -1083,9 +859,7 @@ export default function App() {
             >
               VOLTAR AO TOPO
             </a>
-
           </div>
-
         </section>
 
       </main>
@@ -1095,17 +869,12 @@ export default function App() {
       ====================================================== */}
 
       <footer className="footer">
-
         <div className="footer-main">
-
-          <strong>
-            ACADEMIA
-          </strong>
+          <strong>ACADEMIA</strong>
 
           <span>
             CENTRO DE TREINAMENTO
           </span>
-
         </div>
 
         <address>
@@ -1115,7 +884,6 @@ export default function App() {
         </address>
 
         <div className="footer-links">
-
           <a
             href={IG}
             target="_blank"
@@ -1131,14 +899,12 @@ export default function App() {
           >
             WhatsApp
           </a>
-
         </div>
 
         <p>
           © {new Date().getFullYear()} Academia.
           Todos os direitos reservados.
         </p>
-
       </footer>
     </>
   );
