@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # deps
 node_modules
 
@@ -22,3 +23,29 @@ yarn-error.log*
 
 # vercel
 .vercel
+=======
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+>>>>>>> 223d618910579c929a6832d151f3c525f34f6a2a
