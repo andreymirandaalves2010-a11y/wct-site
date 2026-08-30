@@ -96,3 +96,50 @@ h2{font-size:clamp(26px,4.4vw,44px)}
   *{transition:none!important}
 }
 
+/* ===== RESPONSIVO EXTRA ===== */
+
+/* Tablets (retrato) */
+@media(min-width:600px) and (max-width:820px){
+  .cards{grid-template-columns:repeat(2,1fr)}
+}
+
+/* Celulares pequenos */
+@media(max-width:480px){
+  .brand{font-size:14px;letter-spacing:.16em}
+  .big{font-size:clamp(46px,16vw,90px)}
+  .kicker{letter-spacing:.22em;font-size:clamp(9px,2.5vw,12px)}
+  .cue{font-size:clamp(16px,6vw,32px)}
+  .section{padding:48px 16px}
+  .main-hero{padding:88px 16px 56px}
+  .card{padding:18px}
+  .btn{padding:12px 18px;font-size:11px}
+  .actions{gap:8px}
+  h2{font-size:clamp(22px,6vw,30px)}
+  .footer{padding:36px 16px}
+}
+
+/* Celulares muito pequenos */
+@media(max-width:360px){
+  .big{font-size:clamp(38px,15vw,64px)}
+  .menu a{font-size:13px}
+  .btn{padding:10px 16px}
+}
+
+/* Orientação paisagem em telas pequenas (evita hero gigante) */
+@media(max-width:900px) and (orientation:landscape){
+  .hero{height:180vh}
+  .hero-content{height:100vh}
+  .video-bg{height:100vh}
+}
+
+/* Telas grandes / desktops largos */
+@media(min-width:1440px){
+  .section{max-width:1240px}
+  .cards{gap:22px}
+}
+
+/* Evita overflow horizontal em qualquer largura */
+@media(max-width:400px){
+  .actions .btn{flex:1 1 100%}
+}
+
