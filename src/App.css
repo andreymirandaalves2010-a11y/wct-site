@@ -95,6 +95,7 @@ h2{font-size:clamp(26px,4.4vw,44px)}
   .card:hover{transform:none}
   *{transition:none!important}
 }
+
 /* ===== RESPONSIVO EXTRA ===== */
 
 /* Tablets (retrato) */
@@ -141,5 +142,4 @@ h2{font-size:clamp(26px,4.4vw,44px)}
 @media(max-width:400px){
   .actions .btn{flex:1 1 100%}
 }
-
 
