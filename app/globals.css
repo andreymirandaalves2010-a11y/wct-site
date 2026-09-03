@@ -243,6 +243,9 @@ address {
   position: relative;
 
   padding-block: var(--padding-y);
+
+  content-visibility: auto;
+  contain-intrinsic-size: 800px;
 }
 
 .section-inner {
@@ -295,6 +298,12 @@ address {
   font-weight: 400;
 }
 
+.hero-title,
+.section-title,
+.cta-title {
+  text-wrap: balance;
+}
+
 .section-label {
   margin-bottom: 1.3rem;
 
@@ -333,6 +342,50 @@ address {
 }
 
 /* =========================================================
+   ÍCONE DE SETA — CSS PURO (substitui o caractere "↗")
+========================================================= */
+
+.arrow-icon {
+  position: relative;
+  display: inline-block;
+  width: 0.9em;
+  height: 0.9em;
+  margin-left: 0.5em;
+  vertical-align: middle;
+  flex-shrink: 0;
+}
+
+.arrow-icon::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 70%;
+  height: 2px;
+  background: currentColor;
+  transform: translateY(-50%) rotate(-45deg);
+  transform-origin: left center;
+}
+
+.arrow-icon::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 45%;
+  height: 45%;
+  border-top: 2px solid currentColor;
+  border-right: 2px solid currentColor;
+}
+
+/* Ajusta o ícone dentro dos cards de treinamento */
+.training-arrow.arrow-icon {
+  width: 1em;
+  height: 1em;
+  margin-left: 0;
+}
+
+/* =========================================================
    BOTÕES
 ========================================================= */
 
@@ -361,6 +414,8 @@ address {
 
   overflow: hidden;
 
+  will-change: transform;
+
   transition:
     transform 0.35s ease,
     background 0.35s ease,
@@ -384,6 +439,11 @@ address {
 
 .btn:hover::before {
   transform: translateX(0);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 3px;
 }
 
 .btn-primary {
@@ -1014,6 +1074,8 @@ address {
 
   padding: 1.8rem 0;
 
+  will-change: transform;
+
   transition:
     transform 0.4s ease;
 }
@@ -1072,8 +1134,6 @@ address {
 
 .training-arrow {
   color: var(--red);
-
-  font-size: 1.4rem;
 
   opacity: 0;
 
@@ -1195,6 +1255,8 @@ address {
     rgba(0, 0, 0, 0.3);
 
   backdrop-filter: blur(10px);
+
+  will-change: transform;
 
   transition:
     transform 0.4s ease,
@@ -1601,6 +1663,19 @@ address {
     var(--red);
 
   outline-offset: 4px;
+}
+
+/* =========================================================
+   FALLBACK SEM BACKDROP-FILTER
+========================================================= */
+
+@supports not (backdrop-filter: blur(1px)) {
+  .mobile-menu,
+  .site-header.scrolled,
+  .btn-secondary,
+  .plan {
+    background: rgba(5, 5, 5, 0.96);
+  }
 }
 
 /* =========================================================

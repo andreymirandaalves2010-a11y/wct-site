@@ -1,912 +1,605 @@
-import { useEffect, useRef } from "react";
-import "./App.css";
+"use client";
 
-const WA = "https://wa.me/553899873961";
-const IG = "https://instagram.com/andreymiirandaa";
+import { useEffect, useState } from "react";
 
-const CUES = [
-  "ACADEMIA — CENTRO DE TREINAMENTO",
-  "DISCIPLINA",
-  "FORÇA",
-  "INTENSIDADE",
-  "LEVAMOS O SEU TREINO A SÉRIO.",
-];
-
-export default function App() {
-  const heroRef = useRef(null);
-  const videoRef = useRef(null);
-  const cueRefs = useRef([]);
-  const endRef = useRef(null);
+export default function Home() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const reduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)"
-    ).matches;
-
-    if (reduced) return;
-
-    const hero = heroRef.current;
-    const video = videoRef.current;
-
-    if (!hero || !video) return;
-
-    let ready = false;
-    let raf = 0;
-
-    const onMeta = () => {
-      ready = true;
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 40);
     };
 
-    video.addEventListener("loadedmetadata", onMeta);
+    window.addEventListener("scroll", handleScroll);
+    handleScroll();
 
-    const render = () => {
-      raf = 0;
-
-      const rect = hero.getBoundingClientRect();
-      const total = rect.height - window.innerHeight;
-
-      const p = Math.min(
-        1,
-        Math.max(0, -rect.top / (total || 1))
-      );
-
-      // Controla o vídeo conforme a rolagem
-      if (ready && Number.isFinite(video.duration) && video.duration > 0) {
-        const t = p * Math.max(0, video.duration - 0.05);
-
-        if (Math.abs(video.currentTime - t) > 0.03) {
-          video.currentTime = t;
-        }
-      }
-
-      // Textos da animação
-      const n = CUES.length;
-
-      cueRefs.current.forEach((el, i) => {
-        if (!el) return;
-
-        const start = i / n;
-        const local = (p - start) * n;
-
-        let opacity = 0;
-
-        if (local > -0.15 && local < 1.15) {
-          opacity =
-            local < 0.25
-              ? local / 0.25
-              : local > 0.75
-                ? (1 - local) / 0.25
-                : 1;
-        }
-
-        opacity = Math.min(1, Math.max(0, opacity));
-
-        el.style.opacity = opacity;
-        el.style.transform = `translateY(${(1 - opacity) * 24}px)`;
-      });
-
-      // Animação final
-      const endOpacity = Math.min(
-        1,
-        Math.max(0, (p - 0.9) / 0.1)
-      );
-
-      if (endRef.current) {
-        endRef.current.style.opacity = endOpacity;
-        endRef.current.style.transform = `scale(${
-          0.96 + endOpacity * 0.04
-        })`;
-      }
-    };
-
-    const onScroll = () => {
-      if (!raf) {
-        raf = requestAnimationFrame(render);
-      }
-    };
-
-    window.addEventListener("scroll", onScroll, {
-      passive: true,
-    });
-
-    window.addEventListener("resize", onScroll);
-
-    onScroll();
-
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-
-      video.removeEventListener("loadedmetadata", onMeta);
-
-      if (raf) {
-        cancelAnimationFrame(raf);
-      }
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const closeMenu = () => setMenuOpen(false);
 
   return (
     <>
       {/* =====================================================
-          VÍDEO DE FUNDO
+          VÍDEO DE FUNDO — SITE INTEIRO
       ====================================================== */}
 
-      <div className="video-bg" aria-hidden="true">
+      <div className="bg-video-wrapper" aria-hidden="true">
         <video
-          ref={videoRef}
-          className="video"
-          src={`${import.meta.env.BASE_URL}video/academia-intro.mp4`}
+          className="bg-video"
+          autoPlay
           muted
+          loop
           playsInline
           preload="auto"
-        />
+        >
+          <source src="/video/academia-intro.mp4" type="video/mp4" />
+        </video>
 
-        <div className="video-scrim" />
+        <div className="bg-video-overlay" />
+        <div className="bg-video-grain" />
       </div>
 
       {/* =====================================================
           NAVBAR
       ====================================================== */}
 
-      <header className="nav">
-        <a className="brand" href="#top">
-          ACADEMIA
-        </a>
-
-        <input
-          id="navtoggle"
-          className="navtoggle"
-          type="checkbox"
-        />
-
-        <label
-          className="burger"
-          htmlFor="navtoggle"
-          aria-label="Abrir menu"
-        >
-          <span />
-        </label>
-
-        <nav className="menu">
-          <a href="#treinos">Treinos</a>
-          <a href="#estrutura">Estrutura</a>
-          <a href="#sobre">Sobre</a>
-          <a href="#planos">Planos</a>
-          <a href="#faq">FAQ</a>
-
-          <a
-            href={IG}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Instagram
+      <header className={`site-header ${scrolled ? "scrolled" : ""}`}>
+        <div className="nav-inner">
+          <a href="#inicio" className="logo" onClick={closeMenu}>
+            <span className="logo-main">WCT</span>
+            <span className="logo-sub">Centro de Treinamento</span>
           </a>
 
-          <a
-            className="btn btn-red"
-            href={WA}
-            target="_blank"
-            rel="noreferrer"
+          <nav className="nav-links">
+            <a href="#sobre">Sobre</a>
+            <a href="#treinamentos">Treinamentos</a>
+            <a href="#estrutura">Estrutura</a>
+            <a href="#planos">Planos</a>
+            <a href="#horarios">Horários</a>
+            <a href="#localizacao">Localização</a>
+          </nav>
+
+          <button
+            className={`menu-toggle ${menuOpen ? "is-open" : ""}`}
+            onClick={() => setMenuOpen(!menuOpen)}
+            aria-label="Abrir menu"
+            aria-expanded={menuOpen}
           >
-            COMEÇAR
-          </a>
-        </nav>
+            <span />
+            <span />
+            <span />
+          </button>
+        </div>
       </header>
+
+      {/* =====================================================
+          MENU MOBILE
+      ====================================================== */}
+
+      <div className={`mobile-menu ${menuOpen ? "open" : ""}`}>
+        <ul>
+          <li>
+            <a href="#inicio" onClick={closeMenu}>
+              Início
+            </a>
+          </li>
+
+          <li>
+            <a href="#sobre" onClick={closeMenu}>
+              Sobre
+            </a>
+          </li>
+
+          <li>
+            <a href="#treinamentos" onClick={closeMenu}>
+              Treinamentos
+            </a>
+          </li>
+
+          <li>
+            <a href="#estrutura" onClick={closeMenu}>
+              Estrutura
+            </a>
+          </li>
+
+          <li>
+            <a href="#planos" onClick={closeMenu}>
+              Planos
+            </a>
+          </li>
+
+          <li>
+            <a href="#horarios" onClick={closeMenu}>
+              Horários
+            </a>
+          </li>
+
+          <li>
+            <a href="#localizacao" onClick={closeMenu}>
+              Localização
+            </a>
+          </li>
+        </ul>
+      </div>
 
       {/* =====================================================
           CONTEÚDO
       ====================================================== */}
 
-      <main id="top">
+      <main id="conteudo">
 
-        {/* =====================================================
-            HERO COM VÍDEO
-        ====================================================== */}
+        {/* ===================================================
+            HERO
+        ==================================================== */}
 
-        <section
-          className="hero"
-          ref={heroRef}
-          aria-label="Abertura Academia"
-        >
-          <div className="hero-content">
+        <section className="hero" id="inicio">
+          <div className="hero-inner">
+            <p className="hero-eyebrow">
+              ACADEMIA — CENTRO DE TREINAMENTO
+            </p>
 
-            <div className="cues">
-              {CUES.map((text, index) => (
-                <p
-                  key={text}
-                  className="cue"
-                  ref={(el) => {
-                    cueRefs.current[index] = el;
-                  }}
-                >
-                  {text}
-                </p>
-              ))}
+            <h1 className="hero-title">
+              <span className="line">FORÇA</span>
+              <span className="line accent">DISCIPLINA</span>
+              <span className="line">PERFORMANCE</span>
+            </h1>
+
+            <p className="hero-desc">
+              Treine com propósito. Desenvolva força, condicionamento
+              e disciplina em um ambiente preparado para evolução.
+            </p>
+
+            <div className="hero-actions">
+              <a
+                href="https://wa.me/553899873961"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary"
+              >
+                Agendar treino
+              </a>
+
+              <a href="#treinamentos" className="btn btn-secondary">
+                Conhecer treinamentos
+              </a>
             </div>
+          </div>
 
-            <div
-              className="heroEnd"
-              ref={endRef}
-            >
-              <span className="big">
-                ACADEMIA
-              </span>
-
-              <span className="kicker">
-                CENTRO DE TREINAMENTO
-              </span>
-            </div>
-
+          <div className="scroll-indicator">
+            <div className="scroll-line" />
+            <span>Scroll para explorar</span>
           </div>
         </section>
 
-        {/* =====================================================
-            HERO PRINCIPAL
-        ====================================================== */}
-
-        <section className="main-hero">
-          <p className="tag">
-            CENTRO DE TREINAMENTO
-          </p>
-
-          <h1 className="big">
-            ACADEMIA
-          </h1>
-
-          <p className="kicker">
-            DISCIPLINA · FORÇA · INTENSIDADE
-          </p>
-
-          <p className="lead">
-            Levamos o seu treino a sério.
-          </p>
-
-          <div className="actions">
-            <a
-              className="btn btn-red"
-              href={WA}
-              target="_blank"
-              rel="noreferrer"
-            >
-              QUERO TREINAR
-            </a>
-
-            <a
-              className="btn btn-ghost"
-              href="#sobre"
-            >
-              CONHECER A ACADEMIA
-            </a>
-          </div>
-        </section>
-
-        {/* =====================================================
+        {/* ===================================================
             SOBRE
-        ====================================================== */}
+        ==================================================== */}
 
-        <section
-          id="sobre"
-          className="section"
-        >
-          <p className="tag">
-            SOBRE A ACADEMIA
-          </p>
+        <section className="section" id="sobre">
+          <div className="section-inner">
+            <p className="section-label">01 — Sobre</p>
 
-          <h2>
-            Treino de verdade.
-            <br />
-            Resultado de verdade.
-          </h2>
+            <div className="about-grid">
+              <div>
+                <h2 className="section-title">
+                  MAIS QUE UM TREINO.
+                  <br />
+                  UMA MENTALIDADE.
+                </h2>
 
-          <p className="body">
-            A Academia é um centro de treinamento
-            pensado para pessoas que querem
-            transformar o exercício em parte da rotina.
-          </p>
+                <p className="about-copy">
+                  Aqui o treinamento vai além do exercício.
+                  Trabalhamos força, resistência, técnica e
+                  disciplina para ajudar você a evoluir dentro
+                  e fora da academia.
+                </p>
+              </div>
 
-          <p className="body">
-            Aqui você encontra um ambiente preparado
-            para diferentes níveis de experiência,
-            objetivos e estilos de treinamento.
-          </p>
-
-          <p className="body">
-            O foco é criar uma experiência de treino
-            baseada em disciplina, consistência,
-            orientação e evolução.
-          </p>
-        </section>
-
-        {/* =====================================================
-            BENEFÍCIOS
-        ====================================================== */}
-
-        <section className="section">
-          <p className="tag">
-            POR QUE TREINAR?
-          </p>
-
-          <h2>
-            Mais que um treino.
-            <br />
-            Um estilo de vida.
-          </h2>
-
-          <div className="cards">
-            <article className="card">
-              <span className="card-number">01</span>
-
-              <h3>SAÚDE</h3>
-
-              <p>
-                A prática regular de exercícios pode
-                contribuir para uma rotina mais ativa,
-                disposição e qualidade de vida.
-              </p>
-            </article>
-
-            <article className="card">
-              <span className="card-number">02</span>
-
-              <h3>PERFORMANCE</h3>
-
-              <p>
-                Desenvolva diferentes capacidades
-                físicas por meio de treinos
-                estruturados e progressivos.
-              </p>
-            </article>
-
-            <article className="card">
-              <span className="card-number">03</span>
-
-              <h3>CONSISTÊNCIA</h3>
-
-              <p>
-                Crie uma rotina de treinamento e
-                transforme pequenas evoluções em
-                progresso ao longo do tempo.
-              </p>
-            </article>
+              <div className="about-stat">
+                <span className="stat-number">100%</span>
+                <span className="stat-label">
+                  FOCO NA SUA EVOLUÇÃO
+                </span>
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* =====================================================
-            MODALIDADES
-        ====================================================== */}
+        {/* ===================================================
+            TREINAMENTOS
+        ==================================================== */}
 
-        <section
-          id="treinos"
-          className="section"
-        >
-          <p className="tag">
-            MODALIDADES
-          </p>
+        <section className="section" id="treinamentos">
+          <div className="section-inner">
+            <p className="section-label">02 — Treinamentos</p>
 
-          <h2>
-            Encontre o treino
-            <br />
-            ideal para você.
-          </h2>
+            <h2 className="section-title">
+              ENCONTRE SEU
+              <br />
+              DESAFIO
+            </h2>
 
-          <p className="body">
-            Diferentes possibilidades de treinamento
-            para diferentes objetivos.
-          </p>
+            <div className="training-list">
+              <div className="training-item">
+                <article>
+                  <span className="training-index">01</span>
 
-          <div className="cards">
-            <article className="card">
-              <span className="card-number">01</span>
-              <h3>MUSCULAÇÃO</h3>
-              <p>
-                Treinamento de força para desenvolver
-                resistência, força e performance.
-              </p>
-            </article>
+                  <div className="training-content">
+                    <h3 className="training-name">
+                      MUSCULAÇÃO
+                    </h3>
 
-            <article className="card">
-              <span className="card-number">02</span>
-              <h3>CARDIO</h3>
-              <p>
-                Exercícios voltados para condicionamento
-                cardiovascular e resistência.
-              </p>
-            </article>
+                    <p className="training-desc">
+                      Treinamento focado em força,
+                      resistência e desenvolvimento físico.
+                    </p>
+                  </div>
 
-            <article className="card">
-              <span className="card-number">03</span>
-              <h3>FUNCIONAL</h3>
-              <p>
-                Movimentos dinâmicos para trabalhar
-                diferentes capacidades físicas.
-              </p>
-            </article>
+                  <span
+                    className="training-arrow arrow-icon"
+                    aria-hidden="true"
+                  />
+                </article>
+              </div>
 
-            <article className="card">
-              <span className="card-number">04</span>
-              <h3>AULAS EM GRUPO</h3>
-              <p>
-                Treine em equipe e mantenha a motivação
-                durante cada sessão.
-              </p>
-            </article>
+              <div className="training-item">
+                <article>
+                  <span className="training-index">02</span>
+
+                  <div className="training-content">
+                    <h3 className="training-name">
+                      FUNCIONAL
+                    </h3>
+
+                    <p className="training-desc">
+                      Exercícios dinâmicos para melhorar
+                      condicionamento, mobilidade e potência.
+                    </p>
+                  </div>
+
+                  <span
+                    className="training-arrow arrow-icon"
+                    aria-hidden="true"
+                  />
+                </article>
+              </div>
+
+              <div className="training-item">
+                <article>
+                  <span className="training-index">03</span>
+
+                  <div className="training-content">
+                    <h3 className="training-name">
+                      MUAY THAI
+                    </h3>
+
+                    <p className="training-desc">
+                      Técnica, condicionamento e disciplina
+                      através das artes marciais.
+                    </p>
+                  </div>
+
+                  <span
+                    className="training-arrow arrow-icon"
+                    aria-hidden="true"
+                  />
+                </article>
+              </div>
+
+              <div className="training-item">
+                <article>
+                  <span className="training-index">04</span>
+
+                  <div className="training-content">
+                    <h3 className="training-name">
+                      CONDICIONAMENTO
+                    </h3>
+
+                    <p className="training-desc">
+                      Desenvolva resistência e capacidade
+                      física para superar seus limites.
+                    </p>
+                  </div>
+
+                  <span
+                    className="training-arrow arrow-icon"
+                    aria-hidden="true"
+                  />
+                </article>
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* =====================================================
+        {/* ===================================================
             ESTRUTURA
-        ====================================================== */}
+        ==================================================== */}
 
-        <section
-          id="estrutura"
-          className="section"
-        >
-          <p className="tag">
-            NOSSA ESTRUTURA
-          </p>
+        <section className="section" id="estrutura">
+          <div className="section-inner">
+            <p className="section-label">03 — Estrutura</p>
 
-          <h2>
-            Um espaço preparado
-            <br />
-            para você.
-          </h2>
+            <h2 className="section-title">
+              PREPARADO PARA
+              <br />
+              EVOLUIR
+            </h2>
 
-          <p className="body">
-            Uma estrutura organizada para oferecer
-            diferentes possibilidades de treinamento
-            em um ambiente confortável e funcional.
-          </p>
+            <div className="facility-grid">
+              <div className="facility-item">
+                EQUIPAMENTOS
+              </div>
 
-          <div className="cards">
-            <article className="card">
-              <h3>EQUIPAMENTOS</h3>
-              <p>
-                Equipamentos para diferentes exercícios,
-                objetivos e níveis de treinamento.
-              </p>
-            </article>
+              <div className="facility-item">
+                ÁREA DE TREINO
+              </div>
 
-            <article className="card">
-              <h3>ESPAÇO</h3>
-              <p>
-                Ambientes organizados para você
-                realizar seus exercícios com liberdade.
-              </p>
-            </article>
+              <div className="facility-item">
+                ARTES MARCIAIS
+              </div>
 
-            <article className="card">
-              <h3>AMBIENTE</h3>
-              <p>
-                Um espaço pensado para manter você
-                focado durante cada treino.
-              </p>
-            </article>
-          </div>
-        </section>
+              <div className="facility-item">
+                CARDIO
+              </div>
 
-        {/* =====================================================
-            ACOMPANHAMENTO
-        ====================================================== */}
+              <div className="facility-item">
+                FORÇA
+              </div>
 
-        <section className="section band">
-          <p className="tag">
-            ACOMPANHAMENTO
-          </p>
-
-          <h2>
-            Você não precisa
-            <br />
-            treinar sozinho.
-          </h2>
-
-          <p className="body narrow">
-            Conte com orientação para compreender
-            os exercícios, organizar sua rotina de
-            treinamento e desenvolver consistência.
-          </p>
-
-          <div className="cards">
-            <article className="card">
-              <h3>ORIENTAÇÃO</h3>
-              <p>
-                Receba orientações para entender
-                melhor os movimentos e exercícios.
-              </p>
-            </article>
-
-            <article className="card">
-              <h3>EVOLUÇÃO</h3>
-              <p>
-                Acompanhe seu desenvolvimento e ajuste
-                sua rotina conforme seus objetivos.
-              </p>
-            </article>
-
-            <article className="card">
-              <h3>MOTIVAÇÃO</h3>
-              <p>
-                Um ambiente de treino pode ajudar
-                você a manter uma rotina mais consistente.
-              </p>
-            </article>
-          </div>
-        </section>
-
-        {/* =====================================================
-            OBJETIVOS
-        ====================================================== */}
-
-        <section className="section">
-          <p className="tag">
-            SEU OBJETIVO
-          </p>
-
-          <h2>
-            Comece de onde
-            <br />
-            você está.
-          </h2>
-
-          <div className="cards">
-            <article className="card">
-              <h3>CONDICIONAMENTO</h3>
-              <p>
-                Desenvolva resistência e melhore seu
-                preparo físico para diferentes atividades.
-              </p>
-            </article>
-
-            <article className="card">
-              <h3>FORÇA</h3>
-              <p>
-                Trabalhe diferentes grupos musculares
-                e desenvolva sua capacidade de força.
-              </p>
-            </article>
-
-            <article className="card">
-              <h3>QUALIDADE DE VIDA</h3>
-              <p>
-                Transforme o exercício em parte da
-                sua rotina e mantenha-se ativo.
-              </p>
-            </article>
-          </div>
-        </section>
-
-        {/* =====================================================
-            HORÁRIOS
-        ====================================================== */}
-
-        <section className="section center">
-          <p className="tag">
-            HORÁRIOS
-          </p>
-
-          <h2>
-            Treine no seu
-            <br />
-            melhor horário.
-          </h2>
-
-          <div className="schedule">
-            <div className="schedule-item">
-              <strong>SEGUNDA — SEXTA</strong>
-              <span>06:00 — 22:00</span>
-            </div>
-
-            <div className="schedule-item">
-              <strong>SÁBADO</strong>
-              <span>08:00 — 14:00</span>
-            </div>
-
-            <div className="schedule-item">
-              <strong>DOMINGO</strong>
-              <span>FECHADO</span>
+              <div className="facility-item">
+                CONDICIONAMENTO
+              </div>
             </div>
           </div>
-
-          <p className="body small">
-            * Horários ilustrativos. Ajuste conforme
-            o funcionamento real da academia.
-          </p>
         </section>
 
-        {/* =====================================================
+        {/* ===================================================
             PLANOS
-        ====================================================== */}
+        ==================================================== */}
 
-        <section
-          id="planos"
-          className="section"
-        >
-          <p className="tag">
-            PLANOS
-          </p>
+        <section className="section" id="planos">
+          <div className="section-inner">
+            <p className="section-label">04 — Planos</p>
 
-          <h2>
-            Escolha a melhor
-            <br />
-            forma de treinar.
-          </h2>
+            <h2 className="section-title">
+              ESCOLHA SEU
+              <br />
+              PLANO
+            </h2>
 
-          <div className="cards">
-            <article className="card plan-card">
-              <span className="card-number">01</span>
+            <div className="plans-grid">
+              <div className="plan">
+                <span className="plan-name">
+                  PLANO START
+                </span>
 
-              <h3>MENSAL</h3>
+                <div className="plan-price">
+                  R$ 89
+                  <span>/mês</span>
+                </div>
 
-              <p>
-                Flexibilidade para começar sua rotina
-                de treinamento.
-              </p>
+                <p className="plans-note">
+                  TREINE NO SEU RITMO
+                </p>
+              </div>
 
-              <strong>
-                CONSULTE VALORES
-              </strong>
+              <div className="plan plan-featured">
+                <span className="plan-tag">
+                  MAIS ESCOLHIDO
+                </span>
 
-              <a
-                className="btn btn-ghost"
-                href={WA}
-                target="_blank"
-                rel="noreferrer"
-              >
-                SABER MAIS
-              </a>
-            </article>
+                <span className="plan-name">
+                  PLANO PERFORMANCE
+                </span>
 
-            <article className="card plan-card featured">
-              <span className="card-number">02</span>
+                <div className="plan-price">
+                  R$ 119
+                  <span>/mês</span>
+                </div>
 
-              <h3>TRIMESTRAL</h3>
+                <p className="plans-note">
+                  FOCO TOTAL NA EVOLUÇÃO
+                </p>
+              </div>
 
-              <p>
-                Mais tempo para criar consistência
-                e acompanhar sua evolução.
-              </p>
+              <div className="plan">
+                <span className="plan-name">
+                  PLANO PREMIUM
+                </span>
 
-              <strong>
-                CONSULTE VALORES
-              </strong>
+                <div className="plan-price">
+                  R$ 149
+                  <span>/mês</span>
+                </div>
 
-              <a
-                className="btn btn-red"
-                href={WA}
-                target="_blank"
-                rel="noreferrer"
-              >
-                QUERO ESTE
-              </a>
-            </article>
+                <p className="plans-note">
+                  EXPERIÊNCIA COMPLETA
+                </p>
+              </div>
+            </div>
 
-            <article className="card plan-card">
-              <span className="card-number">03</span>
-
-              <h3>ANUAL</h3>
-
-              <p>
-                Para quem quer manter uma rotina de
-                treinamento durante todo o ano.
-              </p>
-
-              <strong>
-                CONSULTE VALORES
-              </strong>
-
-              <a
-                className="btn btn-ghost"
-                href={WA}
-                target="_blank"
-                rel="noreferrer"
-              >
-                SABER MAIS
-              </a>
-            </article>
+            <p className="plans-disclaimer">
+              Consulte condições, modalidades disponíveis e
+              valores diretamente com a academia.
+            </p>
           </div>
         </section>
 
-        {/* =====================================================
-            FAQ
-        ====================================================== */}
+        {/* ===================================================
+            HORÁRIOS
+        ==================================================== */}
 
-        <section
-          id="faq"
-          className="section"
-        >
-          <p className="tag">
-            DÚVIDAS FREQUENTES
-          </p>
+        <section className="section" id="horarios">
+          <div className="section-inner">
+            <p className="section-label">05 — Horários</p>
 
-          <h2>
-            Perguntas
-            <br />
-            frequentes.
-          </h2>
+            <h2 className="section-title hours-title">
+              TREINE NO
+              <br />
+              SEU HORÁRIO
+            </h2>
 
-          <div className="faq">
-            <details>
-              <summary>
-                Preciso ter experiência para começar?
-              </summary>
+            <div className="hours-grid">
+              <div className="hours-row">
+                <span className="hours-day">
+                  Segunda — Sexta
+                </span>
 
-              <p>
-                Não. A academia pode receber pessoas
-                com diferentes níveis de experiência.
-                O ideal é começar respeitando seu nível atual.
-              </p>
-            </details>
+                <span className="hours-time">
+                  06:00 — 22:00
+                </span>
+              </div>
 
-            <details>
-              <summary>
-                Posso fazer uma aula experimental?
-              </summary>
+              <div className="hours-row">
+                <span className="hours-day">
+                  Sábado
+                </span>
 
-              <p>
-                Entre em contato pelo WhatsApp para
-                verificar a disponibilidade de aula experimental.
-              </p>
-            </details>
+                <span className="hours-time">
+                  08:00 — 12:00
+                </span>
+              </div>
 
-            <details>
-              <summary>
-                Preciso levar algum equipamento?
-              </summary>
+              <div className="hours-row">
+                <span className="hours-day">
+                  Domingo
+                </span>
 
-              <p>
-                Normalmente você precisa apenas de roupas
-                confortáveis, água e disposição para treinar.
-              </p>
-            </details>
-
-            <details>
-              <summary>
-                Existe acompanhamento?
-              </summary>
-
-              <p>
-                A disponibilidade de acompanhamento pode
-                variar de acordo com o serviço e o plano escolhido.
-              </p>
-            </details>
-
-            <details>
-              <summary>
-                Posso começar mesmo sendo iniciante?
-              </summary>
-
-              <p>
-                Sim. Converse com a equipe para entender
-                qual opção de treinamento é mais adequada
-                para o seu nível.
-              </p>
-            </details>
-
-            <details>
-              <summary>
-                Como faço para conhecer a academia?
-              </summary>
-
-              <p>
-                Entre em contato pelo WhatsApp para combinar
-                uma visita e conhecer o espaço.
-              </p>
-            </details>
+                <span className="hours-time">
+                  FECHADO
+                </span>
+              </div>
+            </div>
           </div>
         </section>
 
-        {/* =====================================================
-            INSTAGRAM
-        ====================================================== */}
+        {/* ===================================================
+            LOCALIZAÇÃO
+        ==================================================== */}
 
-        <section className="section center">
-          <p className="tag">
-            INSTAGRAM
-          </p>
+        <section className="section" id="localizacao">
+          <div className="section-inner">
+            <div className="location-grid">
+              <div className="location-info">
+                <p className="section-label">
+                  06 — Localização
+                </p>
 
-          <h2>
-            @andreymiirandaa
-          </h2>
+                <h2 className="section-title">
+                  VENHA
+                  <br />
+                  TREINAR
+                </h2>
 
-          <p className="body">
-            Acompanhe novidades, treinos e conteúdos
-            relacionados ao mundo fitness.
-          </p>
+                <address>
+                  Montes Claros — MG
+                  <br />
+                  Centro de Treinamento WCT
+                  <br />
+                  Consulte nossa localização pelo WhatsApp.
+                </address>
+              </div>
 
-          <a
-            className="btn btn-ghost"
-            href={IG}
-            target="_blank"
-            rel="noreferrer"
-          >
-            VER NO INSTAGRAM
-          </a>
+              <div className="location-actions">
+                <a
+                  href="https://wa.me/553899873961"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-primary"
+                >
+                  WhatsApp
+                  <span className="arrow-icon" aria-hidden="true" />
+                </a>
+
+                <a
+                  href="https://instagram.com/andreymiirandaa"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-secondary"
+                >
+                  Instagram
+                  <span className="arrow-icon" aria-hidden="true" />
+                </a>
+              </div>
+            </div>
+          </div>
         </section>
 
-        {/* =====================================================
+        {/* ===================================================
             CTA FINAL
-        ====================================================== */}
+        ==================================================== */}
 
-        <section className="section center cta">
-          <p className="tag">
-            COMECE AGORA
-          </p>
+        <section className="cta-final">
+          <div className="cta-final-inner">
+            <p className="section-label">
+              COMEÇE AGORA
+            </p>
 
-          <h2 className="xl">
-            Pronto para levar
-            <br />
-            seu treino a sério?
-          </h2>
+            <h2 className="cta-title">
+              <span className="line">
+                SEU LIMITE
+              </span>
 
-          <p className="body narrow">
-            Conheça a Academia, descubra as opções
-            de treinamento e dê o primeiro passo
-            para criar uma rotina mais ativa.
-          </p>
+              <span className="line accent">
+                É O PRÓXIMO NÍVEL
+              </span>
+            </h2>
 
-          <div className="actions">
-            <a
-              className="btn btn-red"
-              href={WA}
-              target="_blank"
-              rel="noreferrer"
-            >
-              FALAR NO WHATSAPP
-            </a>
+            <p className="cta-desc">
+              Entre em contato e agende seu primeiro treino.
+            </p>
 
-            <a
-              className="btn btn-ghost"
-              href="#top"
-            >
-              VOLTAR AO TOPO
-            </a>
+            <div>
+              <a
+                href="https://wa.me/553899873961"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn btn-primary"
+              >
+                Agendar agora
+                <span className="arrow-icon" aria-hidden="true" />
+              </a>
+            </div>
           </div>
         </section>
 
+        {/* ===================================================
+            FOOTER
+        ==================================================== */}
+
+        <footer className="site-footer">
+          <div className="section-inner">
+            <div className="footer-inner">
+              <div className="footer-brand">
+                <div className="logo-main">
+                  WCT
+                </div>
+
+                <p>
+                  Centro de Treinamento
+                </p>
+              </div>
+
+              <div className="footer-contact">
+                <p>
+                  Montes Claros — MG
+                </p>
+
+                <p>
+                  Treinamento • Disciplina • Performance
+                </p>
+              </div>
+
+              <p className="footer-copy">
+                © {new Date().getFullYear()} WCT — Centro de
+                Treinamento. Todos os direitos reservados.
+              </p>
+            </div>
+          </div>
+        </footer>
       </main>
-
-      {/* =====================================================
-          FOOTER
-      ====================================================== */}
-
-      <footer className="footer">
-        <div className="footer-main">
-          <strong>ACADEMIA</strong>
-
-          <span>
-            CENTRO DE TREINAMENTO
-          </span>
-        </div>
-
-        <address>
-          Av. Vicente Guimarães, 2020 - Canelas
-          <br />
-          Montes Claros - MG · 39403-503
-        </address>
-
-        <div className="footer-links">
-          <a
-            href={IG}
-            target="_blank"
-            rel="noreferrer"
-          >
-            Instagram
-          </a>
-
-          <a
-            href={WA}
-            target="_blank"
-            rel="noreferrer"
-          >
-            WhatsApp
-          </a>
-        </div>
-
-        <p>
-          © {new Date().getFullYear()} Academia.
-          Todos os direitos reservados.
-        </p>
-      </footer>
     </>
   );
 }
-
